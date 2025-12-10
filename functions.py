@@ -1,5 +1,6 @@
 import random
 import time
+from getkey import getkey, keys
 
 import data_handler
 import ui
@@ -11,19 +12,19 @@ from ai_host import host_comment
 # and the corresponding functions to retrieve the metadata.
 game_categories = {
     1: {"label": "Number of Bytes", "action": data_handler.get_page_length,
-        "question": "Which article has the largest number of bytes?"},
+        "question": "Which article has more bytes?"},
     2: {"label": "Number of Available Languages", "action": data_handler.get_language_count,
-        "question": "Which article has the largest number of available languages?"},
+        "question": "Which article has more languages?"},
     3: {"label": "Number of Edits", "action": data_handler.get_revision_count,
-        "question": "Which article has the largest number of edits?"},
+        "question": "Which article has more edits?"},
     4: {"label": "Year of Creation", "action": data_handler.get_first_revision_year,
-        "question": "Which article was created most recently?"},
+        "question": "Which article is newer?"},
     5: {"label": "Number of Images", "action": data_handler.get_image_count,
-        "question": "Which article has the largest number of images?"},
+        "question": "Which article has more images?"},
     6: {"label": "Number of Internal Links", "action": data_handler.get_internal_link_count,
-        "question": "Which article has the largest number of internal links?"},
+        "question": "Which article has more internal links?"},
     7: {"label": "Number of External Links", "action": data_handler.get_external_link_count,
-        "question": "Which article has the largest number of external links?"}
+        "question": "Which article has more external links?"}
 }
 
 
@@ -46,9 +47,13 @@ def ask_user_for_name():
 def ask_player_choice(question: str = ""):
     """Ask the player to choose A or B, validate input."""
     while True:
-        user_choice = input(f"🤔 {question} (A/B) ")
-        if user_choice.lower() in ("a", "b"):
-            return user_choice
+        print(f"🤔 {question} (A/B) ")
+        key = getkey()
+        if key in ("a", "b"):
+            return key
+#        user_choice = input(f"🤔 {question} (A/B) ")
+#        if user_choice.lower() in ("a", "b"):
+#            return user_choice
         print("❌ Invalid input. (expected A or B as input!)")
 
 
@@ -100,12 +105,6 @@ def sudden_death(name, highscore):
             print(ui.info(f"Your highscore: {highscore}"))
             print("=" * 60)
 
-            again = input("Play again? (yes/no): ").strip().lower()
-            print()
-
-            if again in ["yes", "y", "ja", "j"]:
-                score = 0  # reset score, keep highscore
-                continue
             return highscore
 
 

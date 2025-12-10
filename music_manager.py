@@ -8,7 +8,7 @@ class MusicManager:
         self.thread = None
         self.playing_event = threading.Event()
 
-    def play(self, track, loop=True):
+    def play(self, track, loop=False):
         """Spielt eine MP3-Datei in Endlosschleife ab (loop=True)."""
         self.stop()  # alte Musik stoppen
         self.playing_event.set()
@@ -35,7 +35,7 @@ class MusicManager:
 music_manager = MusicManager()
 
 def play_music(track = "", loop = True):
-    music_manager.play(f"{track}.mp3", loop)
+    music_manager.play(f"sounds/{track}.mp3", loop)
 
 def stop_music():
     music_manager.stop()

@@ -1,9 +1,9 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 client = OpenAI()
+
 
 def host_comment(
     mode: str = "",
@@ -15,26 +15,25 @@ def host_comment(
     score: int = 0,
     remaining_time: int = None,
 ):
+    """
+    Very short, fast AI host line.
+    One short sentence, max ~15 words.
+    """
+
     winner_title = winner or ""
 
     prompt = f"""
-You are the energetic meta_mind game host.
-One sentence only. Short, punchy, a bit cheeky, *British humour*,
-playful, but clever.
+You are a fast, witty game show host in a Wikipedia metadata quiz called meta_mind.
 
-Purpose: Say something fun about the round AND the titles AND the category.
-Never mention you're AI.
+TASK:
+- Reply with EXACTLY ONE very short sentence (max 15 words).
+- No emojis, no questions, no mention of AI.
+- Tone: clever, playful, a bit British, but concise.
+- If player was correct: praise them briskly.
+- If player was wrong: light, friendly tease.
+- Prefer to mention one of the article titles or the category briefly.
 
-Rules:
-- ALWAYS mention at least one of the titles or a comparison between them.
-- When correct: be curious or impressed.
-- When wrong: humorous, gentle roast, but supportive.
-- Add a tiny nerd fact or "insight" about the category or the topic when possible.
-- Never ask questions back.
-- No emojis.
-- ONE sentence only.
-
-Player data:
+DATA:
 Mode: {mode}
 Category: {category_label}
 Title A: {title_a}
@@ -48,11 +47,13 @@ Time left: {remaining_time}
     try:
         res = client.responses.create(
             model="gpt-5-nano",
-            input=prompt
+            input=prompt,
+            max_output_tokens=40,  # keep it tiny = faster
         )
         text = res.output_text
         if text:
             return text.strip()
         return ""
-    except Exception:
+    except Exception as e:
+        print("[AI HOST ERROR]", e)
         return ""
