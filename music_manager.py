@@ -1,44 +1,24 @@
-from audioplayer import AudioPlayer
-import threading
-import time
+import pygame
 
-class MusicManager:
-    def __init__(self):
-        self.player = None
-        self.thread = None
-        self.playing_event = threading.Event()
+def init_music():
+    pygame.mixer.init()
+    set_volume(0.2)
 
-    def play(self, track, loop=False):
-        """Spielt eine MP3-Datei in Endlosschleife ab (loop=True)."""
-        self.stop()  # alte Musik stoppen
-        self.playing_event.set()
+def play_music(path, loop=False):
+    pygame.mixer.music.load("sounds/"+path+".mp3")
+    pygame.mixer.music.play(-1 if loop else 0)
 
-        def _play_thread():
-            self.player = AudioPlayer(track)
-            self.player.volume = 10
-            self.player.play(loop=loop)
-            while self.playing_event.is_set():
-                time.sleep(0.1)
-            self.player.stop()
+def pause_music():
+    pygame.mixer.music.pause()
 
-        self.thread = threading.Thread(target=_play_thread, daemon=True)
-        self.thread.start()
+def resume_music():
+    pygame.mixer.music.unpause()
 
-    def stop(self):
-        """Stoppt die aktuelle Musik."""
-        self.playing_event.clear()
-        if self.thread and self.thread.is_alive():
-            self.thread.join()
-        self.player = None
-
-
-music_manager = MusicManager()
-
-def play_music(track = "", loop = True):
-    music_manager.play(f"sounds/{track}.mp3", loop)
+def set_volume(v):
+    pygame.mixer.music.set_volume(v)  # 0.0 – 1.0
 
 def stop_music():
-    music_manager.stop()
+    pygame.mixer.music.stop()
 
-# If we have enough time, implement sublte soundeffects!
-# sound_effect_manager = MusicManager()
+def is_music_playing():
+    return pygame.mixer.music.get_busy()
