@@ -6,7 +6,10 @@ import functions
 from music_manager import *
 
 def main():
-    play_music("menu", False)
+
+    init_music()
+
+    play_music("menu")
     # Intro-Bildschirm
     ui.print_intro()
     # initialising featured article data
@@ -33,20 +36,22 @@ def main():
         choice = input("👉 Choose an option (1–5): ").strip()
 
         if choice == "1":
+            pause_music()
             # Sudden Death Mode – gibt neuen Highscore zurück
-            play_music("sudden_death")
+            # play_music("sudden_death")
             high_scores["death"] = functions.sudden_death(name, high_scores["death"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
-            play_music("menu", False)
+            resume_music()
 
         elif choice == "2":
+            pause_music()
             # Speed Mode: so viele Fragen wie möglich in gegebener Zeit
-            play_music("speedmode")
+            # play_music("speedmode")
             high_scores["speed"] = functions.speed_mode(name, high_scores["speed"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
-            play_music("menu", False)
+            resume_music()
 
         elif choice == "3":
             # Help / Anleitung
@@ -62,7 +67,15 @@ def main():
             ui.print_message(msg)
             ui.wait_for_enter()
 
+        
         elif choice == "5":
+            if is_music_playing():
+                pause_music()
+            else:
+                resume_music()
+            ui.print_exit()
+
+        elif choice == "6":
             stop_music()
             ui.print_exit()
             break

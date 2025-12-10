@@ -1,6 +1,8 @@
 import os
 import time
 
+from music_manager import is_music_playing
+
 class Colors:
     RESET = '\033[0m'
     BOLD = '\033[1m'
@@ -166,5 +168,6 @@ def print_menu(sudden_death_hs: int = 0, speed_hs: int = 0):
     print()
     print(f"{color('3.', Colors.CYAN)} Help")
     print(f"{color('4.', Colors.CYAN)} Highscore List")
-    print(f"{color('5.', Colors.RED)} Quit")
+    print(f"{color('5.', Colors.CYAN)} Music {'On' if is_music_playing() else 'Off'}")
+    print(f"{color('6.', Colors.RED)} Quit")
     print()
