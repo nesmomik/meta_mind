@@ -2,11 +2,11 @@ import random
 import data_handler
 import storage_handler
 import ui
-import functions
+import game_logic
 from music_manager import *
 
 def main():
-    play_music("menu", False)
+    #play_music("menu", False)
     # Intro-Bildschirm
     ui.print_intro()
     # initialising featured article data
@@ -15,7 +15,7 @@ def main():
 
     ui.clear_screen()
     ui.print_title()
-    name = functions.ask_user_for_name()
+    name = game_logic.ask_user_for_name()
     ui.print_message(f"👋 Welcome, {name}! 👋")
     ui.wait_for_enter()
 
@@ -34,19 +34,19 @@ def main():
 
         if choice == "1":
             # Sudden Death Mode – gibt neuen Highscore zurück
-            play_music("sudden_death")
-            high_scores["death"] = functions.sudden_death(name, high_scores["death"])
+            #play_music("sudden_death")
+            high_scores["death"] = game_logic.sudden_death(name, high_scores["death"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
-            play_music("menu", False)
+            #play_music("menu", False)
 
         elif choice == "2":
             # Speed Mode: so viele Fragen wie möglich in gegebener Zeit
-            play_music("speedmode")
-            high_scores["speed"] = functions.speed_mode(name, high_scores["speed"])
+            #play_music("speedmode")
+            high_scores["speed"] = game_logic.speed_mode(name, high_scores["speed"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
-            play_music("menu", False)
+            #play_music("menu", False)
 
         elif choice == "3":
             # Help / Anleitung
@@ -63,7 +63,7 @@ def main():
             ui.wait_for_enter()
 
         elif choice == "5":
-            stop_music()
+            #stop_music()
             ui.print_exit()
             break
 
@@ -72,4 +72,7 @@ def main():
             ui.wait_for_enter()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        exit()
