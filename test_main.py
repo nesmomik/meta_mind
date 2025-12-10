@@ -3,7 +3,7 @@ from music_manager import *
 import data_handler
 import storage_handler
 import ui
-import functions
+import game_logic
 
 def main():
     # Play audio file "sounds/menu.mp3"
@@ -17,7 +17,7 @@ def main():
 
     ui.clear_screen()
     ui.print_title()
-    name = functions.ask_user_for_name()
+    name = game_logic.ask_user_for_name()
     ui.print_message(f"👋 Welcome, {name}! 👋")
     ui.wait_for_enter()
 
@@ -36,13 +36,13 @@ def main():
 
         if choice == "1":
             # Sudden Death Mode – gibt neuen Highscore zurück
-            high_scores["death"] = functions.sudden_death(name, high_scores["death"])
+            high_scores["death"] = game_logic.sudden_death(name, high_scores["death"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
 
         elif choice == "2":
             # Speed Mode: so viele Fragen wie möglich in gegebener Zeit
-            high_scores["speed"] = functions.speed_mode(name, high_scores["speed"])
+            high_scores["speed"] = game_logic.speed_mode(name, high_scores["speed"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_enter()
 

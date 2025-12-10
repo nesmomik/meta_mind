@@ -38,9 +38,8 @@ def pick_two_random_titles():
 def pick_random_game_category():
     return random.choice(list(game_categories.values()))
 
-
 def ask_user_for_name():
-    user_name = input("  👉 Enter Player Name: ")
+    user_name = input("\n\n\n  👉 Enter Player Name: ")
     return user_name
 
 
@@ -69,18 +68,13 @@ def check_correct_option(title1, title2, category):
         return "B"
 
 
-def print_answers(title1, title2, title1_info, title2_info):
-    print("Answers:")
-    print(f"{title1}: {title1_info}")
-    print(f"{title2}: {title2_info}")
-
-
 def sudden_death(name, highscore):
     """Sudden Death mode: one mistake ends the run."""
+    print("starting sudden death")
     score = 0
 
     while True:
-        ui.print_round_header("Sudden Death", score + 1)
+        ui.print_header("Sudden Death", score + 1)
 
         won = gameplay(
             pause_after=True,
@@ -91,6 +85,7 @@ def sudden_death(name, highscore):
 
         # update score / highscore
         if won:
+            ui.print_header("Sudden Death")
             score += 1
             print(f"Score: {score}\n")
 
@@ -100,6 +95,7 @@ def sudden_death(name, highscore):
                 print("=" * 60)
         else:
             # game over
+            ui.print_header("Sudden Death")
             print(ui.bad(f"\nGAME OVER {name}"))
             print(f"Current score: {score}")
             print(ui.info(f"Your highscore: {highscore}"))
@@ -209,9 +205,8 @@ def gameplay(
         title2_info = action_function(title2)
 
     # show question
-    print(f"Game category: {random_game_category['label']}")
-    print()
-    print(f"A: {title1}\nB: {title2}\n")
+    category = random_game_category['label']
+    ui.print_question(category, title1, title2)
 
     # player choice
     user_choice = ask_player_choice(random_game_category['question'])
@@ -221,14 +216,9 @@ def gameplay(
     was_correct = user_choice.lower() == correct.lower()
 
     # result
-    if was_correct:
-        print(ui.good("Correct!"))
-    else:
-        print(ui.bad("False!"))
+    ui.print_header("Sudden Death", correct=was_correct)
 
-    print("=" * 60)
-    print_answers(title1, title2, title1_info, title2_info)
-    print("=" * 60)
+    ui.print_answers(title1, title2, title1_info, title2_info)
 
     # ---- AI HOST COMMENTARY: ONLY FOR SUDDEN DEATH ----
     if mode_name == "Sudden Death":

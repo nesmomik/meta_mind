@@ -44,6 +44,54 @@ def info(text):
 def header(text):
     return color(text, Colors.MAGENTA)
 
+def print_question(category, title1, title2):
+    print(f"Game category: {category}")
+    print()
+    print(f"A: {title1}\nB: {title2}\n")
+
+
+def print_answers(title1, title2, title1_info, title2_info):
+    print("Answers:")
+    print()
+    print(f"{title1}: {title1_info}")
+    print(f"{title2}: {title2_info}")
+
+
+def print_header(mode, question_num=None, correct=None):
+    """
+    Clear the screen and print a round header like:
+    ✦ Sudden Death – Question 3 ✦
+    """
+    clear_screen()
+
+    if mode == "Sudden Death":
+        header = r"""
+             _    _               _          _   _    
+  ____  _ __| |__| |___ _ _    __| |___ __ _| |_| |_  
+ (_-< || / _` / _` / -_) ' \  / _` / -_) _` |  _| ' \ 
+ /__/\_,_\__,_\__,_\___|_||_|_\__,_\___\__,_|\__|_||_|
+                           |___|                      
+"""
+    else:
+        header = r"""
+                      _                 _     
+  ____ __  ___ ___ __| |  _ __  ___  __| |___ 
+ (_-< '_ \/ -_) -_) _` | | '  \/ _ \/ _` / -_)
+ /__/ .__/\___\___\__,_|_|_|_|_\___/\__,_\___|
+    |_|               |___|                   
+        """
+
+    print(Colors.MAGENTA + Colors.BOLD + header + Colors.RESET)
+
+    if question_num and not correct:
+        title = f"Question {question_num}"
+        print(color("\n\t\t    ✦ " + title + " ✦\n", Colors.MAGENTA))
+
+    if correct == True:
+       print(color("\n\t\t    ✦ " + "Correct!" + " ✦\n", Colors.GREEN))
+    elif correct == False:
+       print(color("\n\t\t    ✦ " + "False!" + " ✦\n", Colors.RED))
+
 
 def print_round_header(mode, q_num=None, extra: str = ""):
     """
@@ -65,12 +113,17 @@ def print_message(message):
     """Prints a message after clearing the UI, with title on top."""
     clear_screen()
     print_title()
-    print(f"\n\n  {message}\n\n\n")
+    print(f"\n\n\n  {message}\n\n\n")
+
+
+def wait_for_key():
+    """Pause until press of Enter key."""
+    input("Press any key to continue!\n")
 
 
 def wait_for_enter():
     """Pause until press of Enter key."""
-    input("  Press the Enter key to continue!\n")
+    input("\n  Press the Enter key to continue!\n")
 
 
 def clear_screen():
@@ -119,7 +172,9 @@ def print_intro():
     clear_screen()
     print_title()
 
-    print(f"  {Colors.BLUE}Welcome to meta_mind{Colors.RESET}")
+    print("\n\n")
+    print(f"  {Colors.BLUE}Welcome to meta_mind!{Colors.RESET}")
+    print("\n\n")
     print("  Two articles. One duel. Live data in real time.")
     print("  Can you beat the high score? Find out.\n")
 

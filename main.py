@@ -2,7 +2,7 @@ import random
 import data_handler
 import storage_handler
 import ui
-import functions
+import game_logic
 from music_manager import *
 
 def main():
@@ -18,7 +18,7 @@ def main():
 
     ui.clear_screen()
     ui.print_title()
-    name = functions.ask_user_for_name()
+    name = game_logic.ask_user_for_name()
     ui.print_message(f"👋 Welcome, {name}! 👋")
     ui.wait_for_enter()
 
@@ -85,4 +85,7 @@ def main():
             ui.wait_for_enter()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        exit()
