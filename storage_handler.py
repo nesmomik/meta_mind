@@ -59,6 +59,14 @@ def get_user_high_scores(name):
         return None
 
 
+def get_all_high_scores():
+    """
+    Returns the high score dict for given name
+    Returns None if the user has no high score entry
+    """
+    return load_high_scores()
+
+
 def init_user_high_scores(name):
     """
     Initialises the high score dict for a user name

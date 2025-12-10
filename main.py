@@ -1,4 +1,6 @@
-import random
+import time
+from getkey import getkey
+
 import data_handler
 import storage_handler
 import ui
@@ -14,13 +16,13 @@ def main():
     ui.print_intro()
     # initialising featured article data
     data_handler.get_featured_articles()
-    ui.wait_for_enter()
+    ui.wait_for_any_key()
 
     ui.clear_screen()
     ui.print_title()
     name = game_logic.ask_user_for_name()
-    ui.print_message(f"👋 Welcome, {name}! 👋")
-    ui.wait_for_enter()
+    ui.print_message(f"  👋 Welcome, {name}! 👋")
+    time.sleep(1)
 
     # try to get high scores for user
     high_scores = storage_handler.get_user_high_scores(name)
@@ -33,41 +35,49 @@ def main():
         # Menü anzeigen
         ui.clear_screen()
         ui.print_menu(high_scores["death"], high_scores["speed"])
-        choice = input("👉 Choose an option (1–5): ").strip()
-
+        print("  👉 Choose an option (1–6): ")
+        choice = getkey()
         if choice == "1":
             pause_music()
             # Sudden Death Mode – gibt neuen Highscore zurück
             # play_music("sudden_death")
-            high_scores["death"] = functions.sudden_death(name, high_scores["death"])
+            high_scores["death"] = game_logic.sudden_death(name, high_scores["death"])
             storage_handler.update_user_high_score(name, high_scores)
-            ui.wait_for_enter()
+            ui.wait_for_any_key()
             resume_music()
 
         elif choice == "2":
             pause_music()
             # Speed Mode: so viele Fragen wie möglich in gegebener Zeit
             # play_music("speedmode")
-            high_scores["speed"] = functions.speed_mode(name, high_scores["speed"])
+            high_scores["speed"] = game_logic.speed_mode(name, high_scores["speed"])
             storage_handler.update_user_high_score(name, high_scores)
-            ui.wait_for_enter()
+            ui.wait_for_any_key()
             resume_music()
 
         elif choice == "3":
             # Help / Anleitung
             ui.display_game_instructions()
-            ui.wait_for_enter()
+            ui.wait_for_any_key()
 
         elif choice == "4":
             # Highscore-Liste anzeigen
-            msg = (
-                f"\n💥 Sudden Death Highscore: {high_scores['death']} by {name}"
-                f"\n🕑 Speed Mode Highscore:   {high_scores['speed']} by {name}"
-            )
-            ui.print_message(msg)
-            ui.wait_for_enter()
+            all_scores = storage_handler.get_all_high_scores()
+            max_death_score_name = max(all_scores, key=lambda k: all_scores[k]["death"])
+            max_death_score_value = all_scores[max_death_score_name]["death"]
+            max_speed_score_name = max(all_scores, key=lambda k: all_scores[k]["speed"])
+            max_speed_score_value = all_scores[max_speed_score_name]["speed"]
 
-        
+            ui.print_highscores(
+                name,
+                high_scores['death'],
+                high_scores['speed'],
+                max_death_score_name,
+                max_speed_score_name,
+                max_death_score_value,
+                max_speed_score_value
+            )
+            ui.wait_for_any_key()
         elif choice == "5":
             if is_music_playing():
                 pause_music()
@@ -82,7 +92,6 @@ def main():
 
         else:
             ui.print_message("❌ Invalid choice. Please select 1–5.")
-            ui.wait_for_enter()
 
 if __name__ == "__main__":
     try:

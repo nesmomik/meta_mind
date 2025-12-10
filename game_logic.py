@@ -1,10 +1,9 @@
 import random
 import time
-from getkey import getkey, keys
+from getkey import getkey
 
 import data_handler
 import ui
-from ai_host import host_comment
 
 
 # Dictionary containing all possible categories
@@ -46,23 +45,16 @@ def ask_user_for_name():
 def ask_player_choice(question: str = ""):
     """Ask the player to choose A or B, validate input."""
     while True:
-        print(f"🤔 {question} (A/B) ")
+        print(f" 🤔 {question} (A/B) ")
         key = getkey()
         if key in ("a", "b"):
             return key
-#        user_choice = input(f"🤔 {question} (A/B) ")
-#        if user_choice.lower() in ("a", "b"):
-#            return user_choice
-        print("❌ Invalid input. (expected A or B as input!)")
+        print("  ❌ Invalid input. (expected A or B as input!)")
 
 
-def check_correct_option(title1, title2, category):
-    """Compares the values of both articles based on the selected category."""
-    action = category["action"]
-    meta1 = action(title1)
-    meta2 = action(title2)
-
-    if meta1 > meta2:
+def check_correct_option(title1_info, title2_info):
+    """Compares the values of both articles."""
+    if title1_info > title2_info:
         return "A"
     else:
         return "B"
@@ -70,7 +62,6 @@ def check_correct_option(title1, title2, category):
 
 def sudden_death(name, highscore):
     """Sudden Death mode: one mistake ends the run."""
-    print("starting sudden death")
     score = 0
 
     while True:
@@ -85,23 +76,22 @@ def sudden_death(name, highscore):
 
         # update score / highscore
         if won:
-            ui.print_header("Sudden Death")
             score += 1
-            print(f"Score: {score}\n")
-
-            if score > highscore:
-                highscore = score
-                print(f"New highscore: {highscore}\n")
-                print("=" * 60)
         else:
             # game over
-            ui.print_header("Sudden Death")
-            print(ui.bad(f"\nGAME OVER {name}"))
-            print(f"Current score: {score}")
-            print(ui.info(f"Your highscore: {highscore}"))
-            print("=" * 60)
+            if score > highscore:
+                ui.print_header("Sudden Death", won=True)
+                print(f"  WOW!")
+                print()
+                print(f"    Your new highscore: {score}\n")
+            else:
+                ui.print_header("Sudden Death", won=False)
+                print(f"  Nice try!")
+                print()
+                print(f"    Your score: {score}\n")
+                print(f"    Your highscore: {highscore}\n\n")
 
-            return highscore
+            return score
 
 
 def speed_mode(name, best_speed_score, time_limit_seconds: int = 60):
@@ -115,62 +105,52 @@ def speed_mode(name, best_speed_score, time_limit_seconds: int = 60):
     score = 0           # correct answers
     total_questions = 0
 
-    print("=" * 60)
-    print(f"Speed Mode – {time_limit_seconds} seconds for {name}")
-    print("Answer as many questions as you can. Wrong answers do NOT end the game.")
-    print("Clock is ticking... Good luck!\n")
-    print("=" * 60)
-
     start_time = time.time()
 
     while True:
+        ui.print_header("Speed Mode", question_num=score)
         elapsed = time.time() - start_time
         remaining = int(time_limit_seconds - elapsed)
 
+
         if remaining <= 0:
-            print("\n⏰ Time's up!")
+            print("\n  ⏰ Time's up!\n")
             break
+        else:
+            print(f"\n  ⏳ Remaining time: {remaining} seconds\n")
 
-        ui.print_round_header(
-            "Speed Run",
-            total_questions + 1,
-            extra=f"⏳ Remaining time: {remaining} seconds"
-        )
-
-        # For now: no AI host in speed mode
         won = gameplay(
             pause_after=False,
-            mode_name="Speed Run",
+            mode_name="Speed Mode",
             score=score,
             remaining_time=remaining,
         )
+
         total_questions += 1
 
         if won:
             score += 1
-            print(f"✅ Correct! Current Speed Score: {score}")
+            ui.print_header("Speed Mode", question_num=score, correct=True)
         else:
-            print(f"❌ Wrong. Current Speed Score: {score}")
+            ui.print_header("Speed Mode", question_num=score, correct=False)
 
-    print("\n" + "=" * 60)
-    print(ui.header(f"Speed Mode finished, {name}!"))
-    print(f"Correct answers: {score}")
-    print(f"Total questions: {total_questions}")
+    print(ui.header(f"  Speed Mode finished, {name}!\n"))
+    print(f"  Correct answers: {score}")
+    print(f"  Total questions: {total_questions}")
 
     if total_questions > 0:
         accuracy = (score / total_questions) * 100
-        print(f"Accuracy: {accuracy:.1f}%")
+        print(f"  Accuracy: {accuracy:.1f}%")
     else:
-        print("No questions answered 🤷‍♂️")
+        print("  No questions answered 🤷‍♂️")
 
     # update highscore
     if score > best_speed_score:
-        print(f"\n🎉 New Speed Highscore! Old: {best_speed_score} → New: {score}")
+        print(f"\n  🎉 New Speed Highscore! Old: {best_speed_score} → New: {score}")
         best_speed_score = score
     else:
-        print(f"\nSpeed Highscore remains: {best_speed_score}")
+        print(f"\n  Speed Highscore remains: {best_speed_score}")
 
-    print("=" * 60)
     return best_speed_score
 
 
@@ -187,6 +167,12 @@ def gameplay(
 
     # choose a random category
     random_game_category = pick_random_game_category()
+
+    # skip Number of Edits in speed mode
+    while (mode_name == "Speed Mode" and \
+        random_game_category['label'] == "Number of Edits"):
+
+        random_game_category = pick_random_game_category()
 
     # choose two random wikipedia titles
     title1, title2 = pick_two_random_titles()
@@ -212,33 +198,18 @@ def gameplay(
     user_choice = ask_player_choice(random_game_category['question'])
 
     # determine correct option
-    correct = check_correct_option(title1, title2, random_game_category)
+    correct = check_correct_option(title1_info, title2_info)
     was_correct = user_choice.lower() == correct.lower()
 
     # result
-    ui.print_header("Sudden Death", correct=was_correct)
+    ui.print_header(mode_name, question_num=score, correct=was_correct)
 
-    ui.print_answers(title1, title2, title1_info, title2_info)
-
-    # ---- AI HOST COMMENTARY: ONLY FOR SUDDEN DEATH ----
-    if mode_name == "Sudden Death":
-        winner_title = title1 if correct == "A" else title2
-        comment = host_comment(
-            mode=mode_name,
-            category_label=random_game_category["label"],
-            title_a=title1,
-            title_b=title2,
-            winner=winner_title,
-            was_correct=was_correct,
-            score=score if score is not None else 0,
-            remaining_time=remaining_time,
-        )
-        if comment:
-            print()
-            print(ui.info(comment))
-            print()
+    ui.print_answers(category, title1, title2, title1_info, title2_info)
 
     if pause_after:
-        ui.wait_for_enter()
+        ui.wait_for_any_key()
+
+    if mode_name == "Speed Mode":
+        time.sleep(1)
 
     return was_correct
