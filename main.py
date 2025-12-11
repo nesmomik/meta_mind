@@ -78,10 +78,9 @@ def main():
             )
             ui.wait_for_any_key()
         elif choice == "5":
-            if is_music_playing():
-                pause_music()
-            else:
-                resume_music()
+            toggle_music()
+            if music_enabled:
+                play_music("menu")
 
         elif choice == "6":
             stop_music()
