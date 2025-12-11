@@ -37,7 +37,7 @@ def main():
         ui.print_menu(high_scores["death"], high_scores["speed"])
         print("  👉 Choose an option (1–6): ")
         choice = getkey()
-        
+
         if choice == "1":
             # Sudden Death Mode – gibt neuen Highscore zurück
             play_music("sudden_death")
@@ -48,7 +48,7 @@ def main():
 
         elif choice == "2":
             # Speed Mode: so viele Fragen wie möglich in gegebener Zeit
-            play_music("speedmode")
+            play_music("speedmode", False)
             high_scores["speed"] = game_logic.speed_mode(name, high_scores["speed"])
             storage_handler.update_user_high_score(name, high_scores)
             ui.wait_for_any_key()
