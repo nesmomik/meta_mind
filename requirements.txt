@@ -1,4 +1,2 @@
-openai
-audioplayer
 pygame
 get-key
