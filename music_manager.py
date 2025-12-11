@@ -1,5 +1,6 @@
 import pygame
 
+
 def init_music():
     pygame.mixer.init()
     set_volume(0.2)
