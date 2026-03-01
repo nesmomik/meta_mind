@@ -6,7 +6,7 @@ off in a fast-paced metadata duel. Choose the winner
 in categories like pageviews, size, age, edit count
 and more ...
 Trust your instincts, make your pick, and then see how the
-metadata decides!"
+metadata decides!
 
 Install by executing in a terminal 
 ``
